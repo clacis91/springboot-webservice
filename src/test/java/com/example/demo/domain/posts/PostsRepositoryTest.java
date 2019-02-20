@@ -1,8 +1,10 @@
 package com.example.demo.domain.posts;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.After;
@@ -25,12 +27,30 @@ public class PostsRepositoryTest {
 
     @Test
     public void loadThread() {
-        postsRepository.save(Posts.builder().title("테스트").content("테스트입니다").author("남우진").build());
+        //postsRepository.save(Posts.builder().title("테스트").content("테스트입니다").author("남우진").build());
+        postsRepository.save(Posts.builder().title("test").content("this is test").author("wjnam").build());
 
         List<Posts> postList = postsRepository.findAll();
 
         Posts posts = postList.get(0);
-        assertThat(posts.getTitle(), is("테스트"));
-        assertThat(posts.getContent(), is("테스트입니다"));
+        assertThat(posts.getTitle(), is("test"));
+        assertThat(posts.getContent(), is("this is test"));
+    }
+
+    @Test
+    public void createBaseTimeEntity() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        postsRepository.save(Posts.builder()
+                .title("time test")
+                .content("time test content")
+                .author("time test author")
+                .build());
+        //when
+        List<Posts> postsList = postsRepository.findAll();
+
+        Posts posts = postsList.get(0);
+        assertTrue(posts.getCreateDate().isAfter(now));
+        assertTrue(posts.getModifiedDate().isAfter(now));
     }
 }
